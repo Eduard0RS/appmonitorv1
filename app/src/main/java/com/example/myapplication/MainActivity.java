@@ -71,13 +71,15 @@ public class MainActivity extends AppCompatActivity {
     Uri som= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
     @RequiresApi(api = Build.VERSION_CODES.O)
     public void getConexao(){
-
+        List<String> nomesListView=new ArrayList<>();
         SegundoPlano segundoPlano=new SegundoPlano();
         try {
+
             respostaserver=segundoPlano.execute().get();
             JSONArray json = new JSONArray(respostaserver);
             for(int i = 0; i < json.length(); i++){
                 JSONObject o = json.getJSONObject(i);
+                nomesListView.add("Nome: "+(String) o.get("nome")+" Queda: "+ (String) o.get("status").toString());
                 if (o.get("status").toString()=="true"){
                     notification(o.get("id"),o.get("nome"));
                 }
@@ -89,6 +91,10 @@ public class MainActivity extends AppCompatActivity {
         }
         Log.d("RespostaServer: ",respostaserver);
         setAtraso();
+
+        ArrayAdapter<String> adapter=new ArrayAdapter<>(this, android.R.layout.simple_list_item_1,nomesListView);
+        listView.setAdapter(adapter);
+
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
